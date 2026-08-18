@@ -239,9 +239,26 @@ function build(type,date){
   PLAN[type].ex.forEach(ex=>{ const h=exHist(ex.id,date); o[ex.id]=mkSets(ex,h.length?h[0].sets:null); });
   return o;
 }
+/* La lettera è fissa solo se la seduta è chiusa o l'hai scelta a mano.
+   Altrimenti si ricalcola: una seduta aperta non consuma la rotazione. */
+function typeOf(date){
+  const s=S.log[date];
+  if(s&&(s.done||s.manual)) return s.type;
+  return nextType(date);
+}
 function ensure(date){
-  if(!S.log[date]){ const t=nextType(date); S.log[date]={type:t,done:false,ex:build(t,date),note:""}; }
-  return S.log[date];
+  const t=typeOf(date);
+  let s=S.log[date];
+  if(!s){ s=S.log[date]={type:t,done:false,touched:false,manual:false,ex:build(t,date),note:""}; }
+  else if(s.type!==t && !s.done && !s.manual){ s.type=t; s.ex=build(t,date); }
+  return s;
+}
+/* Toglie le sedute solo aperte e mai toccate: sono giorni che hai sfogliato, non allenamenti. */
+function purge(){
+  Object.keys(S.log).forEach(d=>{
+    const s=S.log[d];
+    if(!s.done && !s.touched && !s.manual && d!==SEL && !(s.note||"")) delete S.log[d];
+  });
 }
 function weekKey(s){const d=parse(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return iso(d);}
 function weekStats(w){let ton=0,sed=0;doneDates().forEach(d=>{if(weekKey(d)!==w)return;const t=sesTon(d);if(t>0){ton+=t;sed++;}});return{ton:ton,sed:sed};}
@@ -263,14 +280,15 @@ function tk(v,l,c){return '<div class="tk"><b class="'+(c||"")+'">'+v+'</b><span
 
 /* ---------- STRIP: storico reale + seduta in corso ---------- */
 function renderStrip(){
+  purge();
   const dd=doneDates().slice(-14);
   const pend=[];
-  Object.keys(S.log).forEach(d=>{ if(!S.log[d].done) pend.push(d); });
-  if(pend.indexOf(today())<0 && dd.indexOf(today())<0) pend.push(today());
-  const all=dd.concat(pend.filter(d=>dd.indexOf(d)<0)).sort();
+  Object.keys(S.log).forEach(d=>{ if(!S.log[d].done && dd.indexOf(d)<0) pend.push(d); });
+  [SEL, today()].forEach(d=>{ if(dd.indexOf(d)<0 && pend.indexOf(d)<0) pend.push(d); });
+  const all=dd.concat(pend).sort();
   const el=document.getElementById("strip");
   el.innerHTML=all.map(dt=>{
-    const s=S.log[dt], type=s?s.type:nextType(dt), ton=s&&s.done?sesTon(dt):0;
+    const s=S.log[dt], type=typeOf(dt), ton=s&&s.done?sesTon(dt):0;
     const c=["day"]; if(s&&s.done&&ton>0)c.push("done"); else c.push("pend");
     if(dt===SEL)c.push("sel");
     const d=parse(dt);
@@ -335,7 +353,7 @@ function renderSession(){
     if(v<0)v=0; inp.value=Math.round(v*100)/100; setF(inp);
   }));
   document.querySelectorAll("#session .rirsel").forEach(x=>x.addEventListener("change",e=>setF(e.target)));
-  document.getElementById("snote").addEventListener("input",e=>{S.log[SEL].note=e.target.value;save();});
+  document.getElementById("snote").addEventListener("input",e=>{S.log[SEL].note=e.target.value;S.log[SEL].touched=true;save();});
   document.getElementById("sdate").addEventListener("change",e=>{
     const nd=e.target.value; if(!nd||nd===SEL)return;
     if(!S.log[nd]){ S.log[nd]=S.log[SEL]; delete S.log[SEL]; }
@@ -346,7 +364,7 @@ function renderSession(){
     if(t===cur.type)return;
     if(cur.done||!confirm("Cambiare in Sessione "+t+"? I valori inseriti qui vengono sostituiti."))
       { if(cur.done){toast("Riapri la seduta per cambiarla");return;} return; }
-    cur.type=t; cur.ex=build(t,SEL); save(); renderStrip(); renderSession();
+    cur.type=t; cur.manual=true; cur.ex=build(t,SEL); save(); renderStrip(); renderSession();
   }));
   document.getElementById("mkdone").addEventListener("click",()=>{
     const c=S.log[SEL]; c.done=!c.done; save();
@@ -361,7 +379,7 @@ function stp(e,k,f,v,s){
 }
 function setF(el){
   const s=S.log[SEL], st=s.ex[el.dataset.e][el.dataset.k];
-  st[el.dataset.f]=el.value; save();
+  st[el.dataset.f]=el.value; s.touched=true; save();
   const blk=el.closest(".setblk"); if(blk){const t=blk.querySelector(".tt");
     if(t)t.textContent=Math.round(num(st.a)*num(st.ar)+num(st.b)*num(st.br))+" kg";}
   renderTicker();
