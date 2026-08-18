@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Registro HIT">
+<meta name="theme-color" content="#E9EBEE">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<link rel="icon" href="./icon-180.png">
+<title>Registro HIT — Estate 2026</title>
+<style>
+:root{
+  --paper:#E9EBEE;
+  --panel:#FFFFFF;
+  --ink:#16202B;
+  --mid:#5C6874;
+  --faint:#98A2AE;
+  --rule:#D3D8DE;
+  --teal:#0F6B5F;
+  --teal-bg:#E2F0ED;
+  --amber:#A8501A;
+  --amber-bg:#F8EBE1;
+  --today:#1B3A5C;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.45;
+  padding-bottom:env(safe-area-inset-bottom);
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 90px}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:40;background:var(--paper);
+  padding:14px 0 8px;border-bottom:1px solid var(--rule);
+  padding-top:calc(14px + env(safe-area-inset-top));
+}
+.brandrow{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+h1{
+  font-size:17px;margin:0;font-weight:800;letter-spacing:-.02em;
+  text-transform:uppercase;
+}
+h1 small{font-weight:500;color:var(--faint);letter-spacing:.06em;font-size:11px;display:block;text-transform:none}
+.ticker{
+  display:flex;gap:0;margin-top:10px;border:1px solid var(--rule);
+  background:var(--panel);border-radius:7px;overflow:hidden;
+}
+.tk{flex:1;padding:7px 8px;border-right:1px solid var(--rule);min-width:0}
+.tk:last-child{border-right:0}
+.tk b{display:block;font-family:var(--mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk span{display:block;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-top:1px}
+.up{color:var(--teal)} .down{color:var(--amber)}
+
+/* ---------- tabs ---------- */
+nav.tabs{display:flex;gap:4px;margin-top:10px}
+nav.tabs button{
+  flex:1;padding:8px 4px;font:inherit;font-size:12px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  background:transparent;border:0;border-bottom:2px solid transparent;
+  color:var(--faint);cursor:pointer;
+}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* ---------- rotation strip (signature) ---------- */
+.striplbl{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 7px}
+.striplbl h2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin:0;color:var(--mid);font-weight:700}
+.striplbl a{font-size:11px;color:var(--faint);text-decoration:none;border-bottom:1px dotted var(--faint);cursor:pointer}
+.strip{
+  display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;
+  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+}
+.strip::-webkit-scrollbar{height:0}
+.day{
+  scroll-snap-align:center;flex:0 0 62px;background:var(--panel);
+  border:1px solid var(--rule);border-radius:8px;padding:7px 4px 6px;
+  text-align:center;cursor:pointer;position:relative;
+}
+.day .dow{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.day .num{font-family:var(--mono);font-size:17px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums}
+.day .typ{
+  font-size:10px;font-weight:800;letter-spacing:.06em;margin-top:3px;
+  color:var(--faint);
+}
+.day .ton{font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:1px;min-height:12px;font-variant-numeric:tabular-nums}
+.day.done{background:var(--teal-bg);border-color:#B9D8D1}
+.day.done .typ{color:var(--teal)}
+.day.done .ton{color:var(--teal)}
+.day.future{opacity:.55}
+.day.today{border-color:var(--today);border-width:2px;padding:6px 3px 5px}
+.day.today .dow{color:var(--today);font-weight:700}
+.day.sel{background:var(--ink);border-color:var(--ink)}
+.day.sel .dow,.day.sel .num,.day.sel .typ,.day.sel .ton{color:#fff}
+
+/* ---------- panels ---------- */
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.card>h3{
+  margin:0;padding:11px 13px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  border-bottom:1px solid var(--rule);font-weight:700;color:var(--mid);
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+.card>h3 em{font-style:normal;font-family:var(--mono);color:var(--faint);letter-spacing:0;font-size:11px;text-transform:none}
+
+.sesshead{padding:13px;border-bottom:1px solid var(--rule);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sesshead .t{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0}
+.sesshead .s{font-size:12px;color:var(--mid);margin-top:2px}
+.donebtn{
+  flex:0 0 auto;padding:9px 13px;border-radius:7px;border:1px solid var(--ink);
+  background:var(--panel);color:var(--ink);font:inherit;font-size:12px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;cursor:pointer;
+}
+.donebtn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* ---------- exercise ---------- */
+.ex{border-bottom:1px solid var(--rule);padding:11px 13px 13px}
+.ex:last-child{border-bottom:0}
+.ex.js{background:#FBFCFC;box-shadow:inset 3px 0 0 var(--rule)}
+.exhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:9px}
+.exname{font-weight:700;font-size:14px;letter-spacing:-.01em}
+.exmeta{font-family:var(--mono);font-size:10px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+.jslbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:5px}
+.flag{
+  display:inline-block;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 5px;border-radius:3px;margin-left:6px;vertical-align:1px;
+}
+.flag.pr{background:var(--teal-bg);color:var(--teal)}
+.flag.st{background:var(--amber-bg);color:var(--amber)}
+
+table.sets{width:100%;border-collapse:collapse}
+table.sets th{
+  font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);
+  font-weight:700;text-align:center;padding:0 0 4px;
+}
+table.sets th.lft{text-align:left}
+table.sets td{padding:3px 2px;text-align:center;vertical-align:middle}
+table.sets td.lft{text-align:left;font-family:var(--mono);font-size:11px;color:var(--faint);width:34px}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--panel)}
+.stepper button{
+  width:30px;height:34px;border:0;background:#F4F6F7;color:var(--mid);
+  font-size:17px;font-weight:600;line-height:1;cursor:pointer;font-family:var(--mono);
+}
+.stepper button:active{background:var(--ink);color:#fff}
+.stepper input{
+  width:44px;height:34px;border:0;text-align:center;font-family:var(--mono);
+  font-size:15px;font-weight:600;background:transparent;color:var(--ink);
+  font-variant-numeric:tabular-nums;padding:0;
+}
+.stepper input:focus{outline:2px solid var(--today);outline-offset:-2px}
+.rirsel{
+  height:34px;border:1px solid var(--rule);border-radius:6px;background:var(--panel);
+  font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink);padding:0 4px;
+}
+.toncell{font-family:var(--mono);font-size:12px;color:var(--mid);font-variant-numeric:tabular-nums}
+.last{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:6px;font-variant-numeric:tabular-nums}
+.note{font-size:11px;color:var(--mid);margin-top:7px;line-height:1.4}
+
+/* ---------- body comp ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px}
+.fld label{display:block;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:3px}
+.fld input,.fld select{
+  width:100%;height:38px;border:1px solid var(--rule);border-radius:6px;background:var(--panel);
+  font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);padding:0 9px;
+  font-variant-numeric:tabular-nums;
+}
+.fld input:focus{outline:2px solid var(--today);outline-offset:-2px}
+.btn{
+  width:100%;padding:12px;border-radius:7px;border:1px solid var(--ink);background:var(--ink);
+  color:#fff;font:inherit;font-size:13px;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;cursor:pointer;
+}
+.btn.ghost{background:var(--panel);color:var(--ink)}
+.btn.warn{background:var(--panel);color:var(--amber);border-color:var(--amber)}
+.btnrow{display:flex;gap:8px;padding:0 13px 13px}
+
+table.hist{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+table.hist th{font-family:var(--sans);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);text-align:right;padding:8px 10px;border-bottom:1px solid var(--rule);font-weight:700}
+table.hist th:first-child{text-align:left}
+table.hist td{padding:7px 10px;text-align:right;border-bottom:1px solid #EDF0F2}
+table.hist td:first-child{text-align:left;color:var(--mid)}
+table.hist tr:last-child td{border-bottom:0}
+.del{color:var(--faint);cursor:pointer;font-size:15px;line-height:1}
+
+svg.chart{display:block;width:100%;height:auto}
+.empty{padding:22px 14px;text-align:center;color:var(--faint);font-size:13px;line-height:1.5}
+.hint{font-size:11px;color:var(--faint);line-height:1.5;padding:0 13px 13px}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#fff;padding:11px 17px;border-radius:8px;font-size:13px;
+  font-weight:600;z-index:99;transition:transform .25s ease;box-shadow:0 6px 20px rgba(0,0,0,.2);
+  max-width:90vw;text-align:center;
+}
+.toast.on{transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brandrow">
+    <h1>Registro HIT<small>Estate 2026 · rotazione A / B / C</small></h1>
+  </div>
+  <div class="ticker" id="ticker"></div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="sedute" aria-selected="true">Sedute</button>
+    <button role="tab" data-tab="corpo" aria-selected="false">Corpo</button>
+    <button role="tab" data-tab="trend" aria-selected="false">Trend</button>
+    <button role="tab" data-tab="dati" aria-selected="false">Dati</button>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-sedute">
+    <div class="striplbl">
+      <h2>Calendario</h2>
+      <a id="gotoday">Vai a oggi</a>
+    </div>
+    <div class="strip" id="strip"></div>
+    <div id="session"></div>
+  </section>
+
+  <section id="tab-corpo" hidden></section>
+  <section id="tab-trend" hidden></section>
+  <section id="tab-dati" hidden></section>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   MODELLO
+   ============================================================ */
+const KEY = "registro-hit-2026";
+
+const PLAN = {
+  A: {
+    title: "Sessione A",
+    sub: "Gambe + spinta/trazione verticale",
+    ex: [
+      {id:"bss",  n:"Bulgarian Split Squat (DB)", uni:1, reps:"8-12", load:16, step:2, js:null,
+       note:"Allungamento profondo su quadricipite, adduttori e gluteo. Il moment arm all'anca è massimo nel punto di massimo stiramento."},
+      {id:"idp",  n:"Incline DB Press 1-braccio", uni:1, reps:"6-10", load:24, step:2, js:"Jump set 1",
+       note:"Panca 30-45°. Il core in antirotazione è il vero limitante nelle prime sedute: non è il petto a cedere."},
+      {id:"lpd",  n:"Lat Pulldown 1-braccio", uni:1, reps:"8-12", load:35, step:5, js:"Jump set 1",
+       note:"In ginocchio sotto la colonna, presa neutra. Lascia salire la scapola in alto per allungare del tutto il dorsale."},
+      {id:"clr",  n:"Cable Lateral Raise 1-braccio", uni:1, reps:"10-15", load:5, step:2.5, js:"Jump set 2",
+       note:"Leaning: busto inclinato, mano libera al rack. Carica il deltoide a braccio basso, dove in piedi il momento è nullo."},
+      {id:"crd",  n:"Cable Rear Delt Fly 1-braccio", uni:1, reps:"12-15", load:5, step:2.5, js:"Jump set 2",
+       note:"Cavo alto, braccio che attraversa il corpo in partenza: massimo allungamento del deltoide posteriore."}
+    ]
+  },
+  B: {
+    title: "Sessione B",
+    sub: "Spinta/trazione orizzontale + braccia",
+    ex: [
+      {id:"fdp",  n:"Flat DB Press 1-braccio", uni:1, reps:"6-10", load:26, step:2, js:"Jump set 1",
+       note:"Parti dal sinistro: detta lui le ripetizioni. Non tagliare il destro di più di 1-2 rip per pareggiare."},
+      {id:"row",  n:"Cable Row 1-braccio", uni:1, reps:"8-12", load:35, step:5, js:"Jump set 1",
+       note:"Lascia protrarre la scapola a fine eccentrica. È lì che sta lo stimolo, non nella strizzata finale."},
+      {id:"ode",  n:"Overhead DB Extension 1-braccio", uni:1, reps:"8-12", load:9, step:1, js:"Jump set 2",
+       note:"Spalla flessa sopra la testa: unica posizione in cui il capo lungo del tricipite lavora in allungamento."},
+      {id:"idc",  n:"Incline DB Curl 1-braccio", uni:1, reps:"8-12", load:16, step:2, js:"Jump set 2",
+       note:"Panca 45-60°, braccio che pende dietro la linea del corpo. Capo lungo del bicipite in allungamento."},
+      {id:"dlr",  n:"DB Lateral Raise 1-braccio", uni:1, reps:"12-15", load:8, step:2, js:null,
+       note:"Leaning, agganciato al rack con la mano libera. Senza inclinazione del busto l'esercizio non ha tensione in allungamento."}
+    ]
+  },
+  C: {
+    title: "Sessione C",
+    sub: "Richiamo + braccia stretch focus",
+    ex: [
+      {id:"pul",  n:"DB Pullover", uni:0, reps:"8-12", load:20, step:2, js:"Jump set 1",
+       note:"Unico bilaterale della scheda: è dorso, fuori dal vincolo unilaterale. Massimo allungamento del gran dorsale in home gym."},
+      {id:"idp",  n:"Incline DB Press 1-braccio", uni:1, reps:"6-10", load:24, step:2, js:"Jump set 1",
+       note:"Seconda esposizione settimanale del petto. Stesso carico della Sessione A."},
+      {id:"oce",  n:"Overhead Cable Extension 1-braccio", uni:1, reps:"8-12", load:9, step:2.5, js:"Jump set 2",
+       note:"Ai cavi la tensione resta anche nel punto di massimo allungamento, dove il manubrio la perde."},
+      {id:"bay",  n:"Bayesian Curl 1-braccio", uni:1, reps:"8-12", load:10, step:2.5, js:"Jump set 2",
+       note:"Cavo basso dietro le spalle. Unico curl che carica il capo lungo con la spalla in estensione."},
+      {id:"clr",  n:"Cable Lateral Raise 1-braccio", uni:1, reps:"10-15", load:5, step:2.5, js:"Jump set 3",
+       note:"Seconda esposizione settimanale del deltoide laterale."},
+      {id:"cfp",  n:"Cable Face Pull 1-braccio", uni:1, reps:"12-15", load:7.5, step:2.5, js:"Jump set 3",
+       note:"Cavo all'altezza del viso, rotazione esterna a fine concentrica."}
+    ]
+  }
+};
+
+const SEED_BODY = [
+  {d:"2026-04-20", peso:81.10, gr:23.8, mm:58.70, ms:null, visc:7, bmr:1704, note:""},
+  {d:"2026-04-28", peso:79.45, gr:23.1, mm:58.10, ms:null, visc:6, bmr:1690, note:"Settimana di malattia"},
+  {d:"2026-05-04", peso:80.90, gr:23.8, mm:58.60, ms:null, visc:7, bmr:1702, note:"Rientro con deload"},
+  {d:"2026-05-11", peso:79.75, gr:23.2, mm:58.20, ms:39.56, visc:7, bmr:1692, note:"Muscolo scheletrico, campo diverso"},
+  {d:"2026-05-22", peso:79.30, gr:23.0, mm:58.00, ms:null, visc:6, bmr:1688, note:"Precedente minimo"},
+  {d:"2026-05-28", peso:79.50, gr:23.1, mm:58.10, ms:null, visc:6, bmr:1690, note:""},
+  {d:"2026-06-15", peso:81.25, gr:23.9, mm:58.70, ms:null, visc:7, bmr:1705, note:"Picco del periodo"},
+  {d:"2026-06-18", peso:80.50, gr:23.6, mm:58.40, ms:null, visc:7, bmr:1698, note:""},
+  {d:"2026-08-11", peso:78.30, gr:22.6, mm:57.60, ms:39.15, visc:6, bmr:1679, note:"Minimo storico"}
+];
+
+let S = load();
+
+function blank(){
+  return {
+    cfg:{ start:"2026-08-17", days:[1,3,5], weeks:26 },
+    log:{},          // "YYYY-MM-DD": {type, done, ex:{ id:[{a,ar,b,br,rir}, ...] }}
+    body:SEED_BODY.slice()
+  };
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return blank();
+    const p = JSON.parse(raw);
+    return Object.assign(blank(), p);
+  }catch(e){ return blank(); }
+}
+let saveWarned = false;
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){
+    if(!saveWarned){
+      saveWarned = true;
+      toast("Salvataggio non disponibile qui — scarica il file e aprilo dal browser");
+    }
+  }
+}
+
+/* ============================================================
+   DATE
+   ============================================================ */
+const DOW = ["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];
+const MON = ["gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"];
+function iso(dt){
+  return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0");
+}
+function parse(s){ const p=s.split("-").map(Number); return new Date(p[0],p[1]-1,p[2]); }
+function todayISO(){ return iso(new Date()); }
+function fmt(s){ const d=parse(s); return d.getDate()+" "+MON[d.getMonth()]; }
+
+/* Calendario: dalla data di partenza, nei giorni scelti, rotazione A-B-C continua */
+function schedule(){
+  const out=[]; const cfg=S.cfg;
+  let d = parse(cfg.start);
+  d.setDate(d.getDate()-28);           // 4 settimane indietro, per storico
+  const end = parse(cfg.start);
+  end.setDate(end.getDate() + cfg.weeks*7);
+  const anchor = parse(cfg.start);
+  let i=0;
+  const pre=[];
+  while(d<=end){
+    if(cfg.days.indexOf(d.getDay())>=0) pre.push(iso(d));
+    d.setDate(d.getDate()+1);
+  }
+  // indice di rotazione ancorato alla data di start
+  const startIdx = pre.indexOf(iso(anchor));
+  pre.forEach((s,k)=>{
+    let off = k - (startIdx<0?0:startIdx);
+    const t = ["A","B","C"][((off%3)+3)%3];
+    out.push({d:s, type:t});
+  });
+  return out;
+}
+
+/* ============================================================
+   CALCOLI
+   ============================================================ */
+function sessionOf(dstr){ return S.log[dstr]; }
+
+function exTonnage(sets){
+  let t=0;
+  sets.forEach(s=>{
+    t += (num(s.a)*num(s.ar)) + (num(s.b)*num(s.br));
+  });
+  return t;
+}
+function num(v){ const n=parseFloat(v); return isFinite(n)?n:0; }
+
+function sessionTonnage(dstr){
+  const s=S.log[dstr]; if(!s) return 0;
+  let t=0; for(const k in s.ex) t+=exTonnage(s.ex[k]);
+  return t;
+}
+
+/* storico di un esercizio, dal più recente al più vecchio */
+function exHistory(exid, beforeDate){
+  const rows=[];
+  Object.keys(S.log).sort().forEach(d=>{
+    if(beforeDate && d>=beforeDate) return;
+    const s=S.log[d];
+    if(!s || !s.done || !s.ex[exid]) return;
+    const t=exTonnage(s.ex[exid]);
+    if(t>0) rows.push({d:d, t:t, sets:s.ex[exid]});
+  });
+  return rows.reverse();
+}
+
+function makeSets(ex, prev){
+  if(prev) return JSON.parse(JSON.stringify(prev));
+  const L = ex.load;
+  const lo = parseInt(ex.reps.split("-")[0],10);
+  return [
+    {a:L, ar:lo, b:ex.uni?L:"", br:ex.uni?lo:"", rir:1},
+    {a:L, ar:lo, b:ex.uni?L:"", br:ex.uni?lo:"", rir:0}
+  ];
+}
+
+/* apre/crea una seduta con precompilazione dall'ultima volta */
+function ensure(dstr, type){
+  if(S.log[dstr]) return S.log[dstr];
+  const s={type:type, done:false, ex:{}};
+  PLAN[type].ex.forEach(ex=>{
+    const h=exHistory(ex.id, dstr);
+    s.ex[ex.id]=makeSets(ex, h.length?h[0].sets:null);
+  });
+  S.log[dstr]=s;
+  return s;
+}
+
+function weekKey(dstr){
+  const d=parse(dstr);
+  const day=(d.getDay()+6)%7;                   // lun=0
+  d.setDate(d.getDate()-day);
+  return iso(d);
+}
+function weekStats(wk){
+  let ton=0, sed=0;
+  Object.keys(S.log).forEach(d=>{
+    if(weekKey(d)!==wk) return;
+    const s=S.log[d]; if(!s||!s.done) return;
+    const t=sessionTonnage(d);
+    if(t>0){ ton+=t; sed++; }
+  });
+  return {ton:ton, sed:sed};
+}
+
+/* ============================================================
+   RENDER — TICKER
+   ============================================================ */
+function renderTicker(){
+  const b=S.body.slice().sort((x,y)=>x.d<y.d?-1:1);
+  const last=b[b.length-1], prev=b[b.length-2];
+  const dp = (last&&prev) ? (last.peso-prev.peso) : null;
+  const w = weekStats(weekKey(todayISO()));
+  const el=document.getElementById("ticker");
+  el.innerHTML =
+    tk(last?last.peso.toFixed(2):"—","peso kg") +
+    tk(dp===null?"—":(dp>0?"+":"")+dp.toFixed(2), "Δ ultima", dp===null?"":(dp<0?"up":"down")) +
+    tk(last?last.gr.toFixed(1)+"%":"—","grasso") +
+    tk(w.ton?Math.round(w.ton/1000*10)/10+"t":"0","volume sett.") +
+    tk(w.sed+"/3","sedute");
+}
+function tk(v,l,cls){
+  return '<div class="tk"><b class="'+(cls||"")+'">'+v+'</b><span>'+l+'</span></div>';
+}
+
+/* ============================================================
+   RENDER — STRIP
+   ============================================================ */
+let SEL = null;
+function renderStrip(scroll){
+  const sc=schedule(), t=todayISO(), el=document.getElementById("strip");
+  if(!SEL){
+    let pick = sc.find(x=>x.d>=t);
+    SEL = pick ? pick.d : (sc.length?sc[sc.length-1].d:t);
+  }
+  el.innerHTML = sc.map(x=>{
+    const s=S.log[x.d];
+    const ton=s&&s.done?sessionTonnage(x.d):0;
+    const cls=["day"];
+    if(s&&s.done&&ton>0) cls.push("done");
+    else if(x.d>t) cls.push("future");
+    if(x.d===t) cls.push("today");
+    if(x.d===SEL) cls.push("sel");
+    const d=parse(x.d);
+    return '<div class="'+cls.join(" ")+'" data-d="'+x.d+'" data-t="'+x.type+'">'+
+      '<div class="dow">'+DOW[d.getDay()]+'</div>'+
+      '<div class="num">'+d.getDate()+'</div>'+
+      '<div class="typ">'+x.type+'</div>'+
+      '<div class="ton">'+(ton?Math.round(ton/100)/10+"k":"")+'</div>'+
+    '</div>';
+  }).join("");
+  el.querySelectorAll(".day").forEach(n=>{
+    n.addEventListener("click",()=>{ SEL=n.dataset.d; renderStrip(true); renderSession(); });
+  });
+  if(scroll!==false){
+    const s=el.querySelector(".day.sel");
+    if(s) el.scrollTo({left:s.offsetLeft-el.clientWidth/2+s.clientWidth/2, behavior:"smooth"});
+  }
+}
+
+/* ============================================================
+   RENDER — SEDUTA
+   ============================================================ */
+function renderSession(){
+  const sc=schedule(), item=sc.find(x=>x.d===SEL);
+  const host=document.getElementById("session");
+  if(!item){ host.innerHTML='<div class="card"><div class="empty">Giorno di riposo.</div></div>'; return; }
+  const type=item.type, plan=PLAN[type];
+  const s=ensure(SEL,type);
+  const d=parse(SEL);
+
+  let h='<div class="card">';
+  h+='<div class="sesshead"><div>'+
+     '<p class="t">'+plan.title+'</p>'+
+     '<div class="s">'+DOW[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]+' · '+plan.sub+'</div>'+
+     '</div>'+
+     '<button class="donebtn'+(s.done?" on":"")+'" id="mkdone">'+(s.done?"Fatta ✓":"Segna fatta")+'</button>'+
+     '</div>';
+
+  plan.ex.forEach((ex,i)=>{
+    const sets=s.ex[ex.id]||(s.ex[ex.id]=makeSets(ex,null));
+    const hist=exHistory(ex.id,SEL);
+    const cur=exTonnage(sets);
+    const best=hist.length?Math.max.apply(null,hist.map(x=>x.t)):0;
+    let flag="";
+    if(s.done && cur>0 && best>0 && cur>best) flag=' <span class="flag pr">Record</span>';
+    else if(hist.length>=3 && hist[0].t<=hist[1].t && hist[1].t<=hist[2].t) flag=' <span class="flag st">Stallo</span>';
+
+    const prevJs = i>0?plan.ex[i-1].js:null;
+    const showJs = ex.js && ex.js!==prevJs;
+
+    h+='<div class="ex'+(ex.js?" js":"")+'">';
+    if(showJs) h+='<div class="jslbl">'+ex.js+'</div>';
+    h+='<div class="exhead"><div class="exname">'+ex.n+flag+'</div>'+
+       '<div class="exmeta">'+ex.reps+' rip · '+(ex.uni?"per lato":"bilaterale")+'</div></div>';
+
+    h+='<table class="sets"><tr><th class="lft"></th>'+
+       (ex.uni?'<th>Sx kg</th><th>Sx rip</th><th>Dx kg</th><th>Dx rip</th>':'<th>kg</th><th>rip</th>')+
+       '<th>RIR</th><th>kg tot</th></tr>';
+    sets.forEach((st,k)=>{
+      h+='<tr><td class="lft">S'+(k+1)+'</td>';
+      h+='<td>'+step(ex.id,k,"a",st.a,ex.step)+'</td><td>'+step(ex.id,k,"ar",st.ar,1)+'</td>';
+      if(ex.uni) h+='<td>'+step(ex.id,k,"b",st.b,ex.step)+'</td><td>'+step(ex.id,k,"br",st.br,1)+'</td>';
+      h+='<td><select class="rirsel" data-e="'+ex.id+'" data-k="'+k+'" data-f="rir">'+
+         [0,1,2,3].map(v=>'<option value="'+v+'"'+(Number(st.rir)===v?" selected":"")+'>'+v+'</option>').join("")+
+         '</select></td>';
+      h+='<td class="toncell">'+Math.round(num(st.a)*num(st.ar)+num(st.b)*num(st.br))+'</td></tr>';
+    });
+    h+='</table>';
+
+    if(hist.length){
+      const p=hist[0];
+      const delta=cur-p.t;
+      h+='<div class="last">Ultima ('+fmt(p.d)+'): '+Math.round(p.t)+' kg'+
+         (cur>0?'  ·  oggi '+Math.round(cur)+' kg  ('+(delta>=0?"+":"")+Math.round(delta)+')':'')+'</div>';
+    }
+    h+='<div class="note">'+ex.note+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  h+='<div class="card"><h3>Note seduta</h3><div style="padding:0 13px 13px">'+
+     '<input id="snote" placeholder="caldo, sonno, dolori…" value="'+(s.note||"").replace(/"/g,"&quot;")+'" '+
+     'style="width:100%;height:38px;border:1px solid var(--rule);border-radius:6px;padding:0 9px;font:inherit;font-size:14px">'+
+     '</div></div>';
+
+  host.innerHTML=h;
+
+  host.querySelectorAll(".stepper input").forEach(inp=>{
+    inp.addEventListener("input",e=>setField(e.target));
+  });
+  host.querySelectorAll(".stepper button").forEach(b=>{
+    b.addEventListener("click",e=>{
+      const inp=e.target.parentNode.querySelector("input");
+      const stp=parseFloat(e.target.dataset.s);
+      const dir=e.target.dataset.dir==="+"?1:-1;
+      let v=num(inp.value)+dir*stp;
+      if(v<0) v=0;
+      inp.value=Math.round(v*100)/100;
+      setField(inp); renderSession();
+    });
+  });
+  host.querySelectorAll(".rirsel").forEach(sel=>{
+    sel.addEventListener("change",e=>setField(e.target));
+  });
+  const sn=document.getElementById("snote");
+  if(sn) sn.addEventListener("input",e=>{ S.log[SEL].note=e.target.value; save(); });
+
+  document.getElementById("mkdone").addEventListener("click",()=>{
+    const cur=S.log[SEL];
+    cur.done=!cur.done;
+    save();
+    toast(cur.done?"Seduta registrata":"Seduta riaperta");
+    renderStrip(false); renderSession(); renderTicker();
+  });
+}
+
+function step(exid,k,f,val,stp){
+  return '<span class="stepper">'+
+    '<button data-dir="-" data-s="'+stp+'" aria-label="meno">−</button>'+
+    '<input inputmode="decimal" data-e="'+exid+'" data-k="'+k+'" data-f="'+f+'" value="'+(val===""?"":val)+'">'+
+    '<button data-dir="+" data-s="'+stp+'" aria-label="più">+</button></span>';
+}
+function setField(el){
+  const s=S.log[SEL];
+  s.ex[el.dataset.e][el.dataset.k][el.dataset.f]=el.value;
+  save();
+  const row=el.closest("tr");
+  if(row){
+    const st=s.ex[el.dataset.e][el.dataset.k];
+    const c=row.querySelector(".toncell");
+    if(c) c.textContent=Math.round(num(st.a)*num(st.ar)+num(st.b)*num(st.br));
+  }
+  renderTicker();
+}
+
+/* ============================================================
+   RENDER — CORPO
+   ============================================================ */
+function renderBody(){
+  const b=S.body.slice().sort((x,y)=>x.d<y.d?-1:1).reverse();
+  let h='<div class="card"><h3>Nuova pesata</h3>'+
+    '<div class="grid2">'+
+    fld("bd","Data","date",todayISO())+
+    fld("bp","Peso kg","number","")+
+    fld("bg","Grasso %","number","")+
+    fld("bm","Massa muscolare kg","number","")+
+    fld("bs","Muscolo scheletrico kg","number","")+
+    fld("bv","Grasso viscerale","number","")+
+    fld("bb","BMR kcal","number","")+
+    fld("bn","Nota","text","")+
+    '</div>'+
+    '<div class="btnrow"><button class="btn" id="addbody">Salva pesata</button></div>'+
+    '<div class="hint">Solo al mattino, a digiuno, prima di bere. Con il caldo vale la media di 2-3 pesate ravvicinate, mai la singola. Massa muscolare (~58 kg) e muscolo scheletrico (~39 kg) sono due campi RENPHO diversi.</div>'+
+    '</div>';
+
+  h+='<div class="card"><h3>Storico <em>'+b.length+' rilevamenti</em></h3>';
+  if(!b.length) h+='<div class="empty">Nessuna pesata registrata.</div>';
+  else{
+    h+='<div style="overflow-x:auto"><table class="hist"><tr>'+
+       '<th>Data</th><th>Peso</th><th>Gr %</th><th>Grassa</th><th>Magra</th><th>Musc.</th><th>Δ</th><th></th></tr>';
+    b.forEach((r,i)=>{
+      const nx=b[i+1];
+      const dl=nx?(r.peso-nx.peso):null;
+      const mg=r.peso*r.gr/100;
+      h+='<tr><td>'+fmt(r.d)+'</td><td>'+r.peso.toFixed(2)+'</td><td>'+r.gr.toFixed(1)+'</td>'+
+         '<td>'+mg.toFixed(2)+'</td><td>'+(r.peso-mg).toFixed(2)+'</td>'+
+         '<td>'+(r.mm?r.mm.toFixed(2):"—")+'</td>'+
+         '<td class="'+(dl===null?"":(dl<0?"up":"down"))+'">'+(dl===null?"—":(dl>0?"+":"")+dl.toFixed(2))+'</td>'+
+         '<td><span class="del" data-d="'+r.d+'">×</span></td></tr>';
+    });
+    h+='</table></div>';
+  }
+  h+='</div>';
+  document.getElementById("tab-corpo").innerHTML=h;
+
+  document.getElementById("addbody").addEventListener("click",addBody);
+  document.querySelectorAll("#tab-corpo .del").forEach(x=>{
+    x.addEventListener("click",e=>{
+      const d=e.target.dataset.d;
+      if(!confirm("Eliminare la pesata del "+fmt(d)+"?")) return;
+      S.body=S.body.filter(r=>r.d!==d); save(); renderBody(); renderTicker(); renderTrend();
+    });
+  });
+}
+function fld(id,l,t,v){
+  return '<div class="fld"><label for="'+id+'">'+l+'</label>'+
+    '<input id="'+id+'" type="'+t+'" '+(t==="number"?'inputmode="decimal" step="0.01"':'')+' value="'+v+'"></div>';
+}
+function addBody(){
+  const g=id=>document.getElementById(id).value;
+  const d=g("bd"), p=parseFloat(g("bp")), gr=parseFloat(g("bg"));
+  if(!d || !isFinite(p) || !isFinite(gr)){ toast("Servono almeno data, peso e grasso %"); return; }
+  S.body=S.body.filter(r=>r.d!==d);
+  S.body.push({d:d, peso:p, gr:gr,
+    mm:parseFloat(g("bm"))||null, ms:parseFloat(g("bs"))||null,
+    visc:parseFloat(g("bv"))||null, bmr:parseFloat(g("bb"))||null, note:g("bn")});
+  save(); toast("Pesata salvata");
+  ["bp","bg","bm","bs","bv","bb","bn"].forEach(i=>document.getElementById(i).value="");
+  renderBody(); renderTicker(); renderTrend();
+}
+
+/* ============================================================
+   RENDER — TREND (grafici SVG, nessuna libreria)
+   ============================================================ */
+function line(series, unit, color, pad){
+  const W=680,H=180,ml=42,mr=10,mt=12,mb=26;
+  if(series.length<2) return '<div class="empty">Servono almeno due rilevamenti.</div>';
+  const vs=series.map(s=>s.v);
+  let mn=Math.min.apply(null,vs), mx=Math.max.apply(null,vs);
+  const p=pad||(mx-mn)*0.25||1; mn-=p; mx+=p;
+  const x=i=>ml+i*(W-ml-mr)/(series.length-1);
+  const y=v=>mt+(1-(v-mn)/(mx-mn))*(H-mt-mb);
+  let g="";
+  for(let t=0;t<=3;t++){
+    const v=mn+(mx-mn)*t/3, yy=y(v);
+    g+='<line x1="'+ml+'" y1="'+yy+'" x2="'+(W-mr)+'" y2="'+yy+'" stroke="#E4E8EB" stroke-width="1"/>';
+    g+='<text x="'+(ml-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="10" fill="#98A2AE" font-family="ui-monospace,monospace">'+(Math.round(v*10)/10)+'</text>';
+  }
+  const pts=series.map((s,i)=>x(i)+","+y(s.v)).join(" ");
+  g+='<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+  series.forEach((s,i)=>{
+    g+='<circle cx="'+x(i)+'" cy="'+y(s.v)+'" r="3.2" fill="#fff" stroke="'+color+'" stroke-width="2"/>';
+  });
+  const stepL=Math.ceil(series.length/6);
+  series.forEach((s,i)=>{
+    if(i%stepL===0||i===series.length-1)
+      g+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#98A2AE">'+fmt(s.d)+'</text>';
+  });
+  return '<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img">'+g+'</svg>';
+}
+function bars(series,color){
+  const W=680,H=170,ml=42,mr=10,mt=12,mb=26;
+  if(!series.length) return '<div class="empty">Nessuna seduta registrata.</div>';
+  const mx=Math.max.apply(null,series.map(s=>s.v))||1;
+  const bw=(W-ml-mr)/series.length;
+  let g="";
+  for(let t=0;t<=3;t++){
+    const v=mx*t/3, yy=mt+(1-t/3)*(H-mt-mb);
+    g+='<line x1="'+ml+'" y1="'+yy+'" x2="'+(W-mr)+'" y2="'+yy+'" stroke="#E4E8EB"/>';
+    g+='<text x="'+(ml-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="10" fill="#98A2AE" font-family="ui-monospace,monospace">'+Math.round(v/1000*10)/10+'t</text>';
+  }
+  series.forEach((s,i)=>{
+    const h=(s.v/mx)*(H-mt-mb);
+    g+='<rect x="'+(ml+i*bw+bw*0.18)+'" y="'+(H-mb-h)+'" width="'+(bw*0.64)+'" height="'+h+'" fill="'+color+'" rx="2"/>';
+    g+='<text x="'+(ml+i*bw+bw/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#98A2AE">'+fmt(s.d)+'</text>';
+  });
+  return '<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img">'+g+'</svg>';
+}
+
+function renderTrend(){
+  const b=S.body.slice().sort((x,y)=>x.d<y.d?-1:1);
+  const wks={};
+  Object.keys(S.log).forEach(d=>{
+    const s=S.log[d]; if(!s||!s.done) return;
+    const t=sessionTonnage(d); if(t<=0) return;
+    const w=weekKey(d); wks[w]=(wks[w]||0)+t;
+  });
+  const wser=Object.keys(wks).sort().slice(-12).map(w=>({d:w,v:wks[w]}));
+
+  let h='<div class="card"><h3>Peso <em>kg</em></h3>'+line(b.map(r=>({d:r.d,v:r.peso})),"kg","#1B3A5C",0.6)+'</div>';
+  h+='<div class="card"><h3>Massa grassa vs magra <em>kg</em></h3>'+
+     '<div style="padding:0 0 4px">'+line(b.map(r=>({d:r.d,v:Math.round(r.peso*r.gr/100*100)/100})),"kg","#A8501A",0.5)+'</div>'+
+     '<div style="border-top:1px solid var(--rule)">'+line(b.map(r=>({d:r.d,v:Math.round((r.peso-r.peso*r.gr/100)*100)/100})),"kg","#0F6B5F",0.5)+'</div>'+
+     '<div class="hint">Sopra la massa grassa (ambra), sotto la massa magra (verde). Se scendono insieme e in proporzione simile, il deficit è troppo aggressivo o lo stimolo allenante insufficiente.</div></div>';
+  h+='<div class="card"><h3>Grasso corporeo <em>%</em></h3>'+line(b.map(r=>({d:r.d,v:r.gr})),"%","#A8501A",0.4)+'</div>';
+  h+='<div class="card"><h3>Volume settimanale <em>tonnellaggio</em></h3>'+bars(wser,"#1B3A5C")+
+     '<div class="hint">Il volume deve salire lentamente o restare piatto a parità di sedute. Un crollo improvviso con 3 sedute fatte segnala fatica accumulata, non pigrizia.</div></div>';
+  document.getElementById("tab-trend").innerHTML=h;
+}
+
+/* ============================================================
+   RENDER — DATI
+   ============================================================ */
+function renderData(){
+  const nSes=Object.keys(S.log).filter(d=>S.log[d].done).length;
+  let tot=0; Object.keys(S.log).forEach(d=>{ if(S.log[d].done) tot+=sessionTonnage(d); });
+  let h='<div class="card"><h3>Backup</h3>'+
+    '<div class="hint" style="padding-top:12px">I dati stanno solo su questo dispositivo, nella memoria del browser. Non escono da qui e non c\'è nessun server. Esporta ogni tanto: se svuoti la cache del browser, i dati spariscono.</div>'+
+    '<div class="btnrow"><button class="btn" id="exp">Esporta backup</button>'+
+    '<button class="btn ghost" id="imp">Importa backup</button></div>'+
+    '<input type="file" id="file" accept=".json" hidden></div>';
+
+  h+='<div class="card"><h3>Calendario</h3><div class="grid2">'+
+    '<div class="fld"><label>Prima seduta</label><input id="cstart" type="date" value="'+S.cfg.start+'"></div>'+
+    '<div class="fld"><label>Giorni</label><select id="cdays">'+
+      opt("1,3,5","Lun / Mer / Ven")+opt("2,4,6","Mar / Gio / Sab")+opt("1,3,6","Lun / Mer / Sab")+opt("0,2,4","Dom / Mar / Gio")+
+    '</select></div></div>'+
+    '<div class="btnrow"><button class="btn ghost" id="savecfg">Aggiorna calendario</button></div>'+
+    '<div class="hint">La rotazione A-B-C riparte dalla data della prima seduta. Le sedute già registrate restano dove sono.</div></div>';
+
+  h+='<div class="card"><h3>Totali</h3><div class="grid2" style="padding-bottom:4px">'+
+    '<div><div style="font-family:var(--mono);font-size:24px;font-weight:600">'+nSes+'</div><div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">sedute registrate</div></div>'+
+    '<div><div style="font-family:var(--mono);font-size:24px;font-weight:600">'+(Math.round(tot/1000*10)/10)+' t</div><div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">tonnellaggio totale</div></div>'+
+    '</div>'+
+    '<div class="btnrow"><button class="btn warn" id="reset">Cancella tutto</button></div></div>';
+
+  document.getElementById("tab-dati").innerHTML=h;
+  document.getElementById("cdays").value=S.cfg.days.join(",");
+
+  document.getElementById("exp").addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="registro-hit-"+todayISO()+".json";
+    a.click(); URL.revokeObjectURL(a.href);
+    toast("Backup esportato");
+  });
+  document.getElementById("imp").addEventListener("click",()=>document.getElementById("file").click());
+  document.getElementById("file").addEventListener("change",e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const p=JSON.parse(r.result);
+        if(!p.cfg||!p.log) throw 0;
+        S=Object.assign(blank(),p); save(); SEL=null; renderAll(); toast("Backup importato");
+      }catch(err){ toast("File non valido"); }
+    };
+    r.readAsText(f);
+  });
+  document.getElementById("savecfg").addEventListener("click",()=>{
+    S.cfg.start=document.getElementById("cstart").value||S.cfg.start;
+    S.cfg.days=document.getElementById("cdays").value.split(",").map(Number);
+    save(); SEL=null; renderStrip(); renderSession(); toast("Calendario aggiornato");
+  });
+  document.getElementById("reset").addEventListener("click",()=>{
+    if(!confirm("Cancella tutte le sedute e le pesate. Esporta prima un backup se vuoi tenerle. Procedere?")) return;
+    S=blank(); save(); SEL=null; renderAll(); toast("Dati cancellati");
+  });
+}
+function opt(v,l){ return '<option value="'+v+'">'+l+'</option>'; }
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+let TOASTT;
+function toast(m){
+  const t=document.getElementById("toast");
+  t.textContent=m; t.classList.add("on");
+  clearTimeout(TOASTT); TOASTT=setTimeout(()=>t.classList.remove("on"),2600);
+}
+function renderAll(){ renderTicker(); renderStrip(); renderSession(); renderBody(); renderTrend(); renderData(); }
+
+document.querySelectorAll("nav.tabs button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll("nav.tabs button").forEach(x=>x.setAttribute("aria-selected", x===b?"true":"false"));
+    ["sedute","corpo","trend","dati"].forEach(t=>{
+      document.getElementById("tab-"+t).hidden = (t!==b.dataset.tab);
+    });
+    window.scrollTo({top:0});
+  });
+});
+document.getElementById("gotoday").addEventListener("click",()=>{
+  const sc=schedule(), t=todayISO();
+  const p=sc.find(x=>x.d>=t)||sc[sc.length-1];
+  if(p){ SEL=p.d; renderStrip(); renderSession(); }
+});
+
+renderAll();
+
+/* Offline: registra il service worker solo su origine sicura (https o localhost).
+   Su file:// non è disponibile e l'app funziona comunque, ma senza salvataggio. */
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
+/* Verifica reale che il salvataggio funzioni su questo dispositivo. */
+(function(){
+  let ok = false;
+  try { localStorage.setItem("__t","1"); localStorage.removeItem("__t"); ok = true; } catch(e){}
+  if (!ok) {
+    const b = document.createElement("div");
+    b.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:120;background:#A8501A;color:#fff;padding:12px 14px;font:600 13px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding-bottom:calc(12px + env(safe-area-inset-bottom))";
+    b.textContent = "Salvataggio non disponibile con questo metodo di apertura: i dati andranno persi alla chiusura. Apri l'app dal suo indirizzo https e installala dalla schermata Home.";
+    document.body.appendChild(b);
+  }
+})();
+</script>
+</body>
+</html>
