@@ -88,13 +88,13 @@ nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(-
 .tt{font-family:var(--mono);font-size:11px;color:var(--mid);font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
 .units{display:flex;gap:8px;align-items:center;margin:0 0 3px}
 .units .sl{width:24px}
-.units .u{width:114px;text-align:center;font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.units .u{width:132px;text-align:center;font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:700}
 .side{display:flex;gap:8px;align-items:center;margin-bottom:5px}
 .sl{width:24px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--faint)}
-.stepper{display:inline-flex;align-items:center;border:1px solid var(--rule);border-radius:7px;overflow:hidden;background:var(--panel);width:114px}
-.stepper button{width:34px;height:38px;border:0;background:#F3F5F7;color:var(--mid);font-size:18px;font-weight:600;line-height:1;font-family:var(--mono);cursor:pointer;flex:0 0 34px}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--rule);border-radius:7px;overflow:hidden;background:var(--panel);width:132px}
+.stepper button{width:38px;height:42px;border:0;background:#F3F5F7;color:var(--mid);font-size:19px;font-weight:600;line-height:1;font-family:var(--mono);cursor:pointer;flex:0 0 38px}
 .stepper button:active{background:var(--ink);color:#fff}
-.stepper input{width:46px;height:38px;border:0;text-align:center;font-family:var(--mono);font-size:15px;font-weight:600;background:transparent;color:var(--ink);font-variant-numeric:tabular-nums;padding:0;min-width:0}
+.stepper input{width:56px;height:42px;border:0;text-align:center;font-family:var(--mono);font-size:15px;font-weight:600;background:transparent;color:var(--ink);font-variant-numeric:tabular-nums;padding:0;min-width:0}
 .stepper input:focus{outline:2px solid var(--today);outline-offset:-2px}
 .last{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:8px}
 .note{font-size:11px;color:var(--mid);margin-top:6px;line-height:1.4}
@@ -152,16 +152,16 @@ const STEP=1;            // incremento carico, uguale per tutti: 1 kg
 
 const PLAN={
 A:{title:"Sessione A",sub:"Gambe + spinta/trazione verticale",ex:[
- {id:"bss",n:"Bulgarian Split Squat (DB)",uni:1,reps:"8-12",load:16,js:null,
-  note:"Allungamento profondo su quadricipite, adduttori e gluteo. Il moment arm all'anca è massimo nel punto di massimo stiramento."},
- {id:"idp",n:"Incline DB Press 1-braccio",uni:1,reps:"6-10",load:24,js:"Jump set 1",
-  note:"Panca 30-45°. Nelle prime sedute cede il core in antirotazione, non il petto."},
- {id:"lpd",n:"Lat Pulldown 1-braccio",uni:1,reps:"8-12",load:35,js:"Jump set 1",
+ {id:"sq",n:"Back Squat (bilanciere)",uni:0,reps:"6-10",load:50,js:null,
+  note:"Profondità piena, sotto il parallelo: fermarsi al parallelo è un altro esercizio. Talloni su due dischi se le caviglie limitano. Safety pins regolati all'altezza del fondo, sempre. Unica eccezione al cedimento: chiudi a RIR 1."},
+ {id:"ohp",n:"Overhead DB Press 1-braccio",uni:1,reps:"6-10",load:18,js:"Jump set 1",
+  note:"Seduto sulla panca al massimo angolo, dentro il rack. Il manubrio parte basso, gomito sotto la linea della spalla a ogni ripetizione: partendo da metà strada perdi la parte utile."},
+ {id:"lpd",n:"Lat Pulldown 1-braccio",uni:1,reps:"10-12",load:38,js:"Jump set 1",
   note:"In ginocchio sotto la colonna, presa neutra. Lascia salire la scapola per allungare del tutto il dorsale."},
- {id:"clr",n:"Cable Lateral Raise 1-braccio",uni:1,reps:"10-15",load:5,js:"Jump set 2",
-  note:"Leaning: busto inclinato, mano libera al rack. Carica il deltoide a braccio basso, dove in piedi il momento è nullo."},
- {id:"crd",n:"Cable Rear Delt Fly 1-braccio",uni:1,reps:"12-15",load:5,js:"Jump set 2",
-  note:"Cavo alto, braccio che attraversa il corpo in partenza: massimo allungamento del deltoide posteriore."}]},
+ {id:"idp",n:"Incline DB Press 1-braccio",uni:1,reps:"6-10",load:26,js:"Jump set 2",
+  note:"Panca 30-45°. Seconda esposizione settimanale del petto, qui a valle del press verticale."},
+ {id:"crd",n:"Cable Rear Delt Fly 1-braccio",uni:1,reps:"12-15",load:9,js:"Jump set 2",
+  note:"Cavo alto, braccio che attraversa il corpo in partenza: massimo allungamento del deltoide posteriore. Anche la PRIMA serie va a RIR 0-1."}]},
 B:{title:"Sessione B",sub:"Spinta/trazione orizzontale + braccia",ex:[
  {id:"fdp",n:"Flat DB Press 1-braccio",uni:1,reps:"6-10",load:26,js:"Jump set 1",
   note:"Parti dal sinistro: detta lui le ripetizioni. Non tagliare il destro di più di 1-2 rip per pareggiare."},
@@ -184,8 +184,17 @@ C:{title:"Sessione C",sub:"Richiamo + braccia stretch focus",ex:[
   note:"Cavo basso dietro le spalle. Unico curl che carica il capo lungo con la spalla in estensione."},
  {id:"clr",n:"Cable Lateral Raise 1-braccio",uni:1,reps:"10-15",load:5,js:"Jump set 3",
   note:"Seconda esposizione settimanale del deltoide laterale."},
- {id:"cfp",n:"Cable Face Pull 1-braccio",uni:1,reps:"12-15",load:7.5,js:"Jump set 3",
+ {id:"cfp",n:"Cable Face Pull 1-braccio",uni:1,reps:"12-15",load:7,js:"Jump set 3",
   note:"Cavo all'altezza del viso, rotazione esterna a fine concentrica."}]}};
+
+/* Esercizi usciti dalla scheda: servono solo a rileggere le sedute già chiuse. */
+const LEGACY={
+ bss:{id:"bss",n:"Bulgarian Split Squat (DB)",uni:1,reps:"8-12",load:16,js:null,note:"Fuori scheda da ottobre 2026, sostituito dal Back Squat."}
+};
+function exDef(id){
+  for(const t in PLAN){ const e=PLAN[t].ex.filter(x=>x.id===id)[0]; if(e) return e; }
+  return LEGACY[id]||null;
+}
 
 const SEED=[
  {d:"2026-04-20",peso:81.10,gr:23.8,mm:58.70,ms:null,visc:7,bmr:1704,note:""},
@@ -251,7 +260,12 @@ function ensure(date){
   let s=S.log[date];
   if(!s){ s=S.log[date]={type:t,done:false,touched:false,manual:false,ex:build(t,date),note:""}; }
   else if(s.type!==t && !s.done && !s.manual){ s.type=t; s.ex=build(t,date); }
+  else if(!s.done && !s.touched && !sameEx(s,t)){ s.ex=build(t,date); }  /* scheda cambiata: riallinea una seduta aperta e mai toccata */
   return s;
+}
+function sameEx(s,t){
+  const a=Object.keys(s.ex).sort().join(","), b=PLAN[t].ex.map(e=>e.id).sort().join(",");
+  return a===b;
 }
 /* Toglie le sedute solo aperte e mai toccate: sono giorni che hai sfogliato, non allenamenti. */
 function purge(){
@@ -314,25 +328,33 @@ function renderSession(){
              : 'Prima seduta della rotazione.'))+'</div>';
   h+='<button class="donebtn'+(s.done?" on":"")+'" id="mkdone">'+(s.done?"Seduta chiusa ✓":"Chiudi seduta")+'</button></div>';
 
-  plan.ex.forEach((ex,i)=>{
+  /* Una seduta già chiusa mostra gli esercizi che ha davvero dentro, non la
+     scheda di oggi: così le sedute vecchie restano leggibili dopo un cambio. */
+  const extra=[];
+  Object.keys(s.ex).forEach(k=>{
+    if(!plan.ex.filter(e=>e.id===k).length)
+      extra.push(exDef(k)||{id:k,n:k,uni:1,reps:"",load:0,js:null,note:""});
+  });
+  const list=plan.ex.filter(e=>!s.done||s.ex[e.id]).concat(extra);
+
+  list.forEach((ex,i)=>{
     const sets=s.ex[ex.id]||(s.ex[ex.id]=mkSets(ex,null));
     const hist=exHist(ex.id,SEL), cur=exTon(sets);
     const best=hist.length?Math.max.apply(null,hist.map(x=>x.t)):0;
     let flag="";
     if(s.done&&cur>0&&best>0&&cur>best) flag=' <span class="flag pr">Record</span>';
     else if(hist.length>=3&&hist[0].t<=hist[1].t&&hist[1].t<=hist[2].t) flag=' <span class="flag st">Stallo</span>';
-    const showJs=ex.js&&(i===0||plan.ex[i-1].js!==ex.js);
+    const showJs=ex.js&&(i===0||list[i-1].js!==ex.js);
     h+='<div class="ex'+(ex.js?" js":"")+'">';
     if(showJs)h+='<div class="jslbl">'+ex.js+'</div>';
-    h+='<div class="exname">'+ex.n+flag+'</div><div class="exmeta">'+ex.reps+' rip · '+(ex.uni?"per lato":"bilaterale")+'</div>';
+    h+='<div class="exname">'+ex.n+flag+'</div><div class="exmeta">'+ex.reps+' rip · '+(ex.uni?"per lato, registri il sinistro":"bilaterale")+'</div>';
     sets.forEach((st,k)=>{
       h+='<div class="setblk"><div class="setline"><span class="sn">Serie '+(k+1)+'</span><span class="sp"></span>'+
          '<span class="rirw">RIR <select class="rirsel" data-e="'+ex.id+'" data-k="'+k+'" data-f="rir">'+
          [0,1,2,3].map(v=>'<option value="'+v+'"'+(Number(st.rir)===v?" selected":"")+'>'+v+'</option>').join("")+
          '</select></span><span class="tt">'+Math.round(num(st.a)*num(st.ar)+num(st.b)*num(st.br))+' kg</span></div>';
-      h+='<div class="units"><span class="sl"></span><span class="u">kg</span><span class="u">rip</span></div>';
-      h+='<div class="side"><span class="sl">'+(ex.uni?"Sx":"—")+'</span>'+stp(ex.id,k,"a",st.a,STEP)+stp(ex.id,k,"ar",st.ar,1)+'</div>';
-      if(ex.uni) h+='<div class="side"><span class="sl">Dx</span>'+stp(ex.id,k,"b",st.b,STEP)+stp(ex.id,k,"br",st.br,1)+'</div>';
+      h+='<div class="units"><span class="u">kg</span><span class="u">rip</span></div>';
+      h+='<div class="side">'+stp(ex.id,k,"a",st.a,STEP)+stp(ex.id,k,"ar",st.ar,1)+'</div>';
       h+='</div>';
     });
     if(hist.length){
@@ -378,17 +400,69 @@ function stp(e,k,f,v,s){
     '<button data-dir="+" data-s="'+s+'">+</button></span>';
 }
 function setF(el){
-  const s=S.log[SEL], st=s.ex[el.dataset.e][el.dataset.k];
-  st[el.dataset.f]=el.value; s.touched=true; save();
+  const s=S.log[SEL], id=el.dataset.e, st=s.ex[id][el.dataset.k], f=el.dataset.f, def=exDef(id);
+  st[f]=el.value;
+  /* Registri un lato solo: il destro rispecchia il sinistro, così il tonnellaggio
+     resta confrontabile con lo storico in cui i lati erano due righe separate. */
+  if(def&&def.uni){ if(f==="a") st.b=el.value; if(f==="ar") st.br=el.value; }
+  s.touched=true; save();
   const blk=el.closest(".setblk"); if(blk){const t=blk.querySelector(".tt");
     if(t)t.textContent=Math.round(num(st.a)*num(st.ar)+num(st.b)*num(st.br))+" kg";}
   renderTicker();
 }
 
-/* ---------- CORPO ---------- */
+/* ---------- LETTURA SCREENSHOT RENPHO ----------
+   Legge il testo copiato dallo screenshot (Live Text di iOS) e riconosce i campi.
+   Ancorato alle etichette, non alla posizione: regge cambi di layout dell'app. */
+const MESI={gen:1,feb:2,mar:3,apr:4,mag:5,giu:6,lug:7,ago:8,set:9,ott:10,nov:11,dic:12};
+/* Scorre TUTTE le occorrenze dell'etichetta e tiene la prima che produce un numero:
+   l'intestazione ("Origine dati: Bilancia Grasso Corporeo") contiene le stesse
+   parole delle righe dati e altrimenti rubava il campo. */
+function grab(txt,label,re,skip){
+  const low=txt.toLowerCase(), lab=label.toLowerCase();
+  let i=low.indexOf(lab);
+  while(i>=0){
+    const m=txt.slice(i+lab.length, i+lab.length+90).match(re);
+    if(m) return parseFloat(m[skip||1].replace(",","."));
+    i=low.indexOf(lab, i+1);
+  }
+  return null;
+}
+function parseRenpho(txt){
+  if(!txt||txt.trim().length<10) return null;
+  const t=txt.replace(/\u00A0/g," ");
+  const out={};
+  /* data: "11 ago 2026" oppure 11/08/2026 */
+  let m=t.match(/(\d{1,2})\s+(gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)\w*\s+(\d{4})/i);
+  if(m) out.d=m[3]+"-"+String(MESI[m[2].toLowerCase().slice(0,3)]).padStart(2,"0")+"-"+String(m[1]).padStart(2,"0");
+  else{ m=t.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);
+        if(m) out.d=m[3]+"-"+String(m[2]).padStart(2,"0")+"-"+String(m[1]).padStart(2,"0"); }
+
+  /* peso: preferisce la riga "Peso", esclude "Peso corporeo senza grassi" */
+  const tp=t.replace(/Peso corporeo senza grassi/ig,"@@LBM@@");
+  out.peso = grab(tp,"Peso",/(\d{2,3}[.,]\d{1,2})\s*kg/i);
+  if(out.peso===null){ const g=tp.match(/(\d{2,3}[.,]\d{1,2})\s*\n?\s*kg/i); if(g) out.peso=parseFloat(g[1].replace(",",".")); }
+
+  out.gr   = grab(t,"Grasso Corporeo",/(\d{1,2}[.,]\d)\s*%/);
+  /* "Massa muscolare scheletrica" contiene "Massa muscolare": va mascherata. */
+  out.mm   = grab(t.replace(/Massa muscolare scheletrica/ig,"@@SMM@@"),"Massa muscolare",/(\d{2,3}[.,]\d{1,2})\s*kg/i);
+  /* RENPHO ha cambiato etichetta: "Muscolo scheletrico" nelle versioni vecchie,
+     "Massa muscolare scheletrica" in quelle nuove. */
+  out.ms   = grab(t,"Muscolo scheletrico",/(\d{2,3}[.,]\d{1,2})\s*kg/i);
+  if(out.ms===null) out.ms = grab(t,"Massa muscolare scheletrica",/(\d{2,3}[.,]\d{1,2})\s*kg/i);
+  out.visc = grab(t,"Grasso viscerale",/(\d{1,2})(?!\s*[.,%])/);
+  out.bmr  = grab(t,"BMR",/(\d{3,4})\s*kcal/i);
+  if(out.bmr===null) out.bmr=grab(t,"BMR",/(\d{3,4})/);
+  return (out.peso||out.gr)?out:null;
+}
 function renderBody(){
   const b=S.body.slice().sort((x,y)=>x.d<y.d?-1:1).reverse();
-  let h='<div class="card"><h3>Nuova pesata</h3><div class="grid2">'+
+  let h='<div class="card"><h3>Da screenshot RENPHO</h3>'+
+   '<div style="padding:12px 12px 0"><textarea id="ocr" placeholder="Incolla qui il testo copiato dallo screenshot" '+
+   'style="width:100%;height:74px;border:1px solid var(--rule);border-radius:7px;padding:8px 9px;font:inherit;font-size:13px;resize:vertical;background:var(--panel);color:var(--ink)"></textarea></div>'+
+   '<div class="btnrow" style="padding-top:9px"><button class="btn" id="doocr">Leggi e compila</button></div>'+
+   '<div class="hint">Su iPhone: apri lo screenshot in Foto, tieni premuto sul testo, <b>Seleziona tutto</b> → <b>Copia</b>, poi incolla qui. I valori finiscono nel modulo sotto e li controlli prima di salvare.</div></div>';
+  h+='<div class="card"><h3>Nuova pesata</h3><div class="grid2">'+
    fl("bd","Data","date",today())+fl("bp","Peso kg","number","")+fl("bg","Grasso %","number","")+
    fl("bm","Massa muscolare","number","")+fl("bs","Musc. scheletrico","number","")+fl("bv","Viscerale","number","")+
    fl("bb","BMR","number","")+fl("bn","Nota","text","")+'</div>'+
@@ -403,6 +477,17 @@ function renderBody(){
   h+='</table></div></div>';
   document.getElementById("tab-corpo").innerHTML=h;
   document.getElementById("addbody").addEventListener("click",addBody);
+  document.getElementById("doocr").addEventListener("click",()=>{
+    const r=parseRenpho(document.getElementById("ocr").value);
+    if(!r){ toast("Non ho riconosciuto i campi: controlla di aver copiato tutto"); return; }
+    const set=(id,v)=>{ if(v!==null&&v!==undefined&&!isNaN(v)) document.getElementById(id).value=v; };
+    if(r.d) document.getElementById("bd").value=r.d;
+    set("bp",r.peso); set("bg",r.gr); set("bm",r.mm); set("bs",r.ms); set("bv",r.visc); set("bb",r.bmr);
+    const got=[["peso",r.peso],["grasso",r.gr],["massa musc.",r.mm],["scheletrico",r.ms],["viscerale",r.visc],["BMR",r.bmr]]
+      .filter(x=>x[1]!==null&&x[1]!==undefined).length;
+    toast(got+" campi letti · controlla e salva");
+    document.getElementById("ocr").value="";
+  });
   document.querySelectorAll("#tab-corpo .del").forEach(x=>x.addEventListener("click",e=>{
     const d=e.target.dataset.d; if(!confirm("Eliminare la pesata del "+fmt(d)+"?"))return;
     S.body=S.body.filter(r=>r.d!==d);save();renderBody();renderTicker();renderTrend();}));

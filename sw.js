@@ -1,4 +1,4 @@
-const CACHE = "registro-hit-v1";
+const CACHE = "registro-hit-v2";
 const FILES = [
   "./",
   "./index.html",
