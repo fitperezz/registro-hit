@@ -150,47 +150,76 @@ svg.chart{display:block;width:100%;height:auto}
 const KEY="registro-hit-2026";
 const STEP=1;            // incremento carico, uguale per tutti: 1 kg
 
+/* Full body a serie singola (nov 2026). Una serie allenante per esercizio, 10 esercizi,
+   X e Y alternate. A/B/C restano definite più sotto solo per rileggere lo storico. */
 const PLAN={
-A:{title:"Sessione A",sub:"Gambe + spinta/trazione verticale",ex:[
- {id:"sq",n:"Back Squat (bilanciere)",uni:0,reps:"6-10",load:50,js:null,
-  note:"Profondità piena, sotto il parallelo: fermarsi al parallelo è un altro esercizio. Talloni su due dischi se le caviglie limitano. Safety pins regolati all'altezza del fondo, sempre. Unica eccezione al cedimento: chiudi a RIR 1."},
- {id:"ohp",n:"Overhead DB Press 1-braccio",uni:1,reps:"6-10",load:18,js:"Jump set 1",
-  note:"Seduto sulla panca al massimo angolo, dentro il rack. Il manubrio parte basso, gomito sotto la linea della spalla a ogni ripetizione: partendo da metà strada perdi la parte utile."},
- {id:"lpd",n:"Lat Pulldown 1-braccio",uni:1,reps:"10-12",load:38,js:"Jump set 1",
+X:{title:"Seduta X",sub:"Full body · 10 esercizi, 1 serie",ex:[
+ {id:"sq",n:"Back Squat (bilanciere)",uni:0,reps:"6-10",load:60,rir:1,
+  note:"Profondità piena, sotto il parallelo. Safety pins all'altezza del fondo, sempre. Unica eccezione al cedimento: chiudi a RIR 1."},
+ {id:"idp",n:"Incline DB Press 1-braccio",uni:1,reps:"6-10",load:24,
+  note:"Panca 30-45°. Una serie sola: va a cedimento tecnico."},
+ {id:"lpd",n:"Lat Pulldown 1-braccio",uni:1,reps:"10-12",load:38,
   note:"In ginocchio sotto la colonna, presa neutra. Lascia salire la scapola per allungare del tutto il dorsale."},
- {id:"idp",n:"Incline DB Press 1-braccio",uni:1,reps:"6-10",load:26,js:"Jump set 2",
-  note:"Panca 30-45°. Seconda esposizione settimanale del petto, qui a valle del press verticale."},
- {id:"crd",n:"Cable Rear Delt Fly 1-braccio",uni:1,reps:"12-15",load:9,js:"Jump set 2",
-  note:"Cavo alto, braccio che attraversa il corpo in partenza: massimo allungamento del deltoide posteriore. Anche la PRIMA serie va a RIR 0-1."}]},
-B:{title:"Sessione B",sub:"Spinta/trazione orizzontale + braccia",ex:[
- {id:"fdp",n:"Flat DB Press 1-braccio",uni:1,reps:"6-10",load:26,js:"Jump set 1",
-  note:"Parti dal sinistro: detta lui le ripetizioni. Non tagliare il destro di più di 1-2 rip per pareggiare."},
- {id:"row",n:"Cable Row 1-braccio",uni:1,reps:"8-12",load:35,js:"Jump set 1",
+ {id:"bss",n:"Bulgarian Split Squat (DB)",uni:1,reps:"8-12",load:28,
+  note:"Seconda esposizione settimanale del quadricipite, a basso costo sistemico rispetto allo squat."},
+ {id:"ohp",n:"Overhead DB Press 1-braccio",uni:1,reps:"6-10",load:20,
+  note:"Seduto sulla panca al massimo angolo. Il manubrio parte basso, gomito sotto la linea della spalla."},
+ {id:"row",n:"Cable Row 1-braccio",uni:1,reps:"8-12",load:38,
   note:"Lascia protrarre la scapola a fine eccentrica. È lì che sta lo stimolo, non nella strizzata finale."},
- {id:"ode",n:"Overhead DB Extension 1-braccio",uni:1,reps:"8-12",load:9,js:"Jump set 2",
-  note:"Spalla flessa sopra la testa: unica posizione in cui il capo lungo del tricipite lavora in allungamento."},
- {id:"idc",n:"Incline DB Curl 1-braccio",uni:1,reps:"8-12",load:16,js:"Jump set 2",
-  note:"Panca 45-60°, braccio che pende dietro la linea del corpo. Capo lungo del bicipite in allungamento."},
- {id:"dlr",n:"DB Lateral Raise 1-braccio",uni:1,reps:"12-15",load:8,js:null,
-  note:"Leaning, agganciato al rack con la mano libera. Senza inclinazione del busto non c'è tensione in allungamento."}]},
-C:{title:"Sessione C",sub:"Richiamo + braccia stretch focus",ex:[
- {id:"pul",n:"DB Pullover",uni:0,reps:"8-12",load:20,js:"Jump set 1",
-  note:"Unico bilaterale della scheda: è dorso, fuori dal vincolo unilaterale. Massimo allungamento del gran dorsale in home gym."},
- {id:"idp",n:"Incline DB Press 1-braccio",uni:1,reps:"6-10",load:24,js:"Jump set 1",
-  note:"Seconda esposizione settimanale del petto. Stesso carico della Sessione A."},
- {id:"oce",n:"Overhead Cable Extension 1-braccio",uni:1,reps:"8-12",load:9,js:"Jump set 2",
-  note:"Ai cavi la tensione resta anche nel punto di massimo allungamento, dove il manubrio la perde."},
- {id:"bay",n:"Bayesian Curl 1-braccio",uni:1,reps:"8-12",load:10,js:"Jump set 2",
-  note:"Cavo basso dietro le spalle. Unico curl che carica il capo lungo con la spalla in estensione."},
- {id:"clr",n:"Cable Lateral Raise 1-braccio",uni:1,reps:"10-15",load:5,js:"Jump set 3",
-  note:"Seconda esposizione settimanale del deltoide laterale."},
- {id:"cfp",n:"Cable Face Pull 1-braccio",uni:1,reps:"12-15",load:7,js:"Jump set 3",
-  note:"Cavo all'altezza del viso, rotazione esterna a fine concentrica."}]}};
+ {id:"idc",n:"Incline DB Curl 1-braccio",uni:1,reps:"8-12",load:16,
+  note:"Panca 45-60°, braccio dietro la linea del corpo, 2 sec di pausa in allungamento."},
+ {id:"oce",n:"Overhead Cable Extension 1-braccio",uni:1,reps:"8-12",load:7,
+  note:"2 sec di pausa in allungamento. Se si impunta, chiudi con parziali nella metà bassa invece di salire di carico."},
+ {id:"clr",n:"Cable Lateral Raise 1-braccio",uni:1,reps:"12-15",load:6,
+  note:"Leaning: busto inclinato, mano libera al rack. Resta leggero per natura: il carico non è l'obiettivo."},
+ {id:"crd",n:"Cable Rear Delt Fly 1-braccio",uni:1,reps:"12-15",load:10,
+  note:"Cavo alto, braccio che attraversa il corpo in partenza."}]},
+Y:{title:"Seduta Y",sub:"Full body · 10 esercizi, 1 serie",ex:[
+ {id:"sq",n:"Back Squat (bilanciere)",uni:0,reps:"6-10",load:60,rir:1,
+  note:"Profondità piena, sotto il parallelo. Safety pins all'altezza del fondo, sempre. RIR 1."},
+ {id:"fdp",n:"Flat DB Press 1-braccio",uni:1,reps:"6-10",load:27,
+  note:"Parti dal sinistro: detta lui le ripetizioni."},
+ {id:"row",n:"Cable Row 1-braccio",uni:1,reps:"8-12",load:38,
+  note:"Presa opposta a quella usata nella X."},
+ {id:"rdl",n:"Deficit DB RDL",uni:0,reps:"8-12",load:20,
+  note:"In piedi su un rialzo, manubri che scendono sotto il livello dei piedi. È l'unico lavoro diretto sui posteriori: squat e Bulgarian li coprono male."},
+ {id:"ohp",n:"Overhead DB Press 1-braccio",uni:1,reps:"6-10",load:20,
+  note:"Seconda esposizione settimanale della spinta verticale."},
+ {id:"pul",n:"DB Pullover",uni:0,reps:"8-12",load:17,
+  note:"Massimo allungamento del gran dorsale disponibile in home gym."},
+ {id:"bay",n:"Bayesian Curl 1-braccio",uni:1,reps:"8-12",load:11,
+  note:"Cavo basso dietro le spalle, 2 sec di pausa in allungamento. Unico curl che carica il capo lungo con la spalla in estensione."},
+ {id:"ode",n:"Overhead DB Extension 1-braccio",uni:1,reps:"8-12",load:10,
+  note:"Spalla flessa sopra la testa, 2 sec di pausa in allungamento."},
+ {id:"dlr",n:"DB Lateral Raise 1-braccio",uni:1,reps:"12-15",load:9,
+  note:"Leaning, agganciato al rack con la mano libera."},
+ {id:"cfp",n:"Cable Face Pull 1-braccio",uni:1,reps:"12-15",load:7,
+  note:"Cavo all'altezza del viso, rotazione esterna a fine concentrica."}]},
 
-/* Esercizi usciti dalla scheda: servono solo a rileggere le sedute già chiuse. */
-const LEGACY={
- bss:{id:"bss",n:"Bulgarian Split Squat (DB)",uni:1,reps:"8-12",load:16,js:null,note:"Fuori scheda da ottobre 2026, sostituito dal Back Squat."}
-};
+/* Schede storiche: non entrano nella rotazione, servono a rileggere le sedute chiuse. */
+A:{title:"Sessione A",sub:"Scheda storica · ago-ott 2026",ex:[
+ {id:"sq",n:"Back Squat (bilanciere)",uni:0,reps:"6-10",load:60,note:""},
+ {id:"bss",n:"Bulgarian Split Squat (DB)",uni:1,reps:"8-12",load:28,note:""},
+ {id:"ohp",n:"Overhead DB Press 1-braccio",uni:1,reps:"6-10",load:20,note:""},
+ {id:"lpd",n:"Lat Pulldown 1-braccio",uni:1,reps:"10-12",load:38,note:""},
+ {id:"idp",n:"Incline DB Press 1-braccio",uni:1,reps:"6-10",load:24,note:""},
+ {id:"clr",n:"Cable Lateral Raise 1-braccio",uni:1,reps:"12-15",load:6,note:""},
+ {id:"crd",n:"Cable Rear Delt Fly 1-braccio",uni:1,reps:"12-15",load:10,note:""}]},
+B:{title:"Sessione B",sub:"Scheda storica · ago-ott 2026",ex:[
+ {id:"fdp",n:"Flat DB Press 1-braccio",uni:1,reps:"6-10",load:27,note:""},
+ {id:"row",n:"Cable Row 1-braccio",uni:1,reps:"8-12",load:38,note:""},
+ {id:"ode",n:"Overhead DB Extension 1-braccio",uni:1,reps:"8-12",load:10,note:""},
+ {id:"idc",n:"Incline DB Curl 1-braccio",uni:1,reps:"8-12",load:17,note:""},
+ {id:"dlr",n:"DB Lateral Raise 1-braccio",uni:1,reps:"12-15",load:9,note:""}]},
+C:{title:"Sessione C",sub:"Scheda storica · ago-ott 2026",ex:[
+ {id:"pul",n:"DB Pullover",uni:0,reps:"8-12",load:17,note:""},
+ {id:"idp",n:"Incline DB Press 1-braccio",uni:1,reps:"6-10",load:24,note:""},
+ {id:"oce",n:"Overhead Cable Extension 1-braccio",uni:1,reps:"8-12",load:7,note:""},
+ {id:"bay",n:"Bayesian Curl 1-braccio",uni:1,reps:"8-12",load:11,note:""},
+ {id:"clr",n:"Cable Lateral Raise 1-braccio",uni:1,reps:"12-15",load:6,note:""},
+ {id:"cfp",n:"Cable Face Pull 1-braccio",uni:1,reps:"12-15",load:7,note:""}]}};
+
+const LEGACY={};
 function exDef(id){
   for(const t in PLAN){ const e=PLAN[t].ex.filter(x=>x.id===id)[0]; if(e) return e; }
   return LEGACY[id]||null;
@@ -207,7 +236,7 @@ const SEED=[
  {d:"2026-06-18",peso:80.50,gr:23.6,mm:58.40,ms:null,visc:7,bmr:1698,note:""},
  {d:"2026-08-11",peso:78.30,gr:22.6,mm:57.60,ms:39.15,visc:6,bmr:1679,note:"Minimo storico"}];
 
-function blank(){ return {cfg:{first:"A"}, log:{}, body:SEED.slice()}; }
+function blank(){ return {cfg:{first:"X"}, log:{}, body:SEED.slice()}; }
 let S=(function(){ try{const r=localStorage.getItem(KEY); return r?Object.assign(blank(),JSON.parse(r)):blank(); }catch(e){ return blank(); } })();
 let warned=false;
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){ if(!warned){warned=true;toast("Salvataggio non disponibile con questo metodo di apertura");} } }
@@ -218,7 +247,8 @@ function parse(s){const p=s.split("-").map(Number);return new Date(p[0],p[1]-1,p
 function today(){return iso(new Date());}
 function fmt(s){const d=parse(s);return d.getDate()+" "+MON[d.getMonth()];}
 function num(v){const n=parseFloat(v);return isFinite(n)?n:0;}
-const CYC=["A","B","C"];
+const CYC=["X","Y"];   /* solo queste ruotano; A/B/C restano leggibili nello storico */
+if(CYC.indexOf(S.cfg.first)<0) S.cfg.first=CYC[0];   /* backup con la vecchia rotazione */
 
 /* --- ROTAZIONE DINAMICA: avanza solo quando chiudi una seduta --- */
 function doneDates(){ return Object.keys(S.log).filter(d=>S.log[d].done).sort(); }
@@ -226,22 +256,39 @@ function nextType(before){
   const dd=doneDates().filter(d=>!before||d<before);
   if(!dd.length) return S.cfg.first;
   const last=S.log[dd[dd.length-1]].type;
-  return CYC[(CYC.indexOf(last)+1)%3];
+  /* indexOf -1 per una vecchia A/B/C: (−1+1)%n = 0, quindi si riparte dalla X */
+  return CYC[(CYC.indexOf(last)+1)%CYC.length];
 }
 
-function exTon(sets){let t=0;sets.forEach(s=>{t+=num(s.a)*num(s.ar)+num(s.b)*num(s.br);});return t;}
+function setTon(s){return num(s.a)*num(s.ar)+num(s.b)*num(s.br);}
+function exTon(sets){let t=0;sets.forEach(s=>{t+=setTon(s);});return t;}
+/* Per confrontare le sedute attraverso il passaggio da 2 serie a 1 usiamo la serie
+   migliore, non la somma: altrimenti ogni esercizio sembrerebbe crollato del 50%. */
+function bestSet(sets){let m=0;sets.forEach(s=>{const v=setTon(s);if(v>m)m=v;});return m;}
 function sesTon(d){const s=S.log[d];if(!s)return 0;let t=0;for(const k in s.ex)t+=exTon(s.ex[k]);return t;}
 function exHist(id,before){
   const out=[];
   doneDates().forEach(d=>{ if(before&&d>=before)return;
-    const s=S.log[d]; if(!s.ex[id])return; const t=exTon(s.ex[id]); if(t>0)out.push({d:d,t:t,sets:s.ex[id]}); });
+    const s=S.log[d]; if(!s.ex[id])return; const t=exTon(s.ex[id]);
+    if(t>0)out.push({d:d,t:t,b:bestSet(s.ex[id]),sets:s.ex[id]}); });
   return out.reverse();
 }
+/* Una sola serie allenante. Da uno storico a due serie eredita la migliore. */
 function mkSets(ex,prev){
-  if(prev) return JSON.parse(JSON.stringify(prev));
+  if(prev&&prev.length){
+    /* Eredita la serie più tirata (RIR più basso), non quella col tonnellaggio più alto:
+       una prima serie leggera a RIR 3 era un avvicinamento, non la serie allenante. */
+    let best=prev[0];
+    prev.forEach(s=>{
+      const r=num(s.rir), rb=num(best.rir);
+      if(r<rb || (r===rb && setTon(s)>setTon(best))) best=s;
+    });
+    const c=JSON.parse(JSON.stringify(best));
+    c.rir=ex.rir===undefined?0:ex.rir;
+    return [c];
+  }
   const lo=parseInt(ex.reps.split("-")[0],10);
-  return [{a:ex.load,ar:lo,b:ex.uni?ex.load:"",br:ex.uni?lo:"",rir:1},
-          {a:ex.load,ar:lo,b:ex.uni?ex.load:"",br:ex.uni?lo:"",rir:0}];
+  return [{a:ex.load,ar:lo,b:ex.uni?ex.load:"",br:ex.uni?lo:"",rir:ex.rir===undefined?0:ex.rir}];
 }
 function build(type,date){
   const o={};
@@ -320,10 +367,10 @@ function renderSession(){
   const dd=doneDates(), prev=dd.filter(x=>x<SEL).pop();
   let h='<div class="card"><div class="sesshead">';
   h+='<div class="dateline"><input type="date" id="sdate" value="'+SEL+'">'+
-     '<div class="seg">'+CYC.map(t=>'<button data-t="'+t+'" class="'+(t===s.type?"on":"")+'">'+t+'</button>').join("")+'</div></div>';
+     '<div class="seg">'+CYC.concat(CYC.indexOf(s.type)<0?[s.type]:[]).map(t=>'<button data-t="'+t+'" class="'+(t===s.type?"on":"")+'">'+t+'</button>').join("")+'</div></div>';
   h+='<p class="stitle">'+plan.title+'</p><div class="ssub">'+DOW[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]+' · '+plan.sub+'</div>';
   h+='<div class="rot">'+(s.done
-      ? 'Chiusa. La prossima sarà la <b>'+CYC[(CYC.indexOf(s.type)+1)%3]+'</b>, il giorno che ti alleni.'
+      ? 'Chiusa. La prossima sarà la <b>'+CYC[(CYC.indexOf(s.type)+1)%CYC.length]+'</b>, il giorno che ti alleni.'
       : (prev? 'Ultima chiusa: '+S.log[prev].type+' del '+fmt(prev)+'. Tocca la '+s.type+'.'
              : 'Prima seduta della rotazione.'))+'</div>';
   h+='<button class="donebtn'+(s.done?" on":"")+'" id="mkdone">'+(s.done?"Seduta chiusa ✓":"Chiudi seduta")+'</button></div>';
@@ -339,17 +386,19 @@ function renderSession(){
 
   list.forEach((ex,i)=>{
     const sets=s.ex[ex.id]||(s.ex[ex.id]=mkSets(ex,null));
-    const hist=exHist(ex.id,SEL), cur=exTon(sets);
-    const best=hist.length?Math.max.apply(null,hist.map(x=>x.t)):0;
+    /* Record e stallo si misurano sulla SERIE migliore, non sul totale: così il
+       confronto regge anche fra le sedute a due serie e quelle a una. */
+    const hist=exHist(ex.id,SEL), cur=bestSet(sets);
+    const best=hist.length?Math.max.apply(null,hist.map(x=>x.b)):0;
     let flag="";
     if(s.done&&cur>0&&best>0&&cur>best) flag=' <span class="flag pr">Record</span>';
-    else if(hist.length>=3&&hist[0].t<=hist[1].t&&hist[1].t<=hist[2].t) flag=' <span class="flag st">Stallo</span>';
+    else if(hist.length>=3&&hist[0].b<=hist[1].b&&hist[1].b<=hist[2].b) flag=' <span class="flag st">Stallo</span>';
     const showJs=ex.js&&(i===0||list[i-1].js!==ex.js);
     h+='<div class="ex'+(ex.js?" js":"")+'">';
     if(showJs)h+='<div class="jslbl">'+ex.js+'</div>';
     h+='<div class="exname">'+ex.n+flag+'</div><div class="exmeta">'+ex.reps+' rip · '+(ex.uni?"per lato, registri il sinistro":"bilaterale")+'</div>';
     sets.forEach((st,k)=>{
-      h+='<div class="setblk"><div class="setline"><span class="sn">Serie '+(k+1)+'</span><span class="sp"></span>'+
+      h+='<div class="setblk"><div class="setline"><span class="sn">'+(sets.length>1?"Serie "+(k+1):"Serie allenante")+'</span><span class="sp"></span>'+
          '<span class="rirw">RIR <select class="rirsel" data-e="'+ex.id+'" data-k="'+k+'" data-f="rir">'+
          [0,1,2,3].map(v=>'<option value="'+v+'"'+(Number(st.rir)===v?" selected":"")+'>'+v+'</option>').join("")+
          '</select></span><span class="tt">'+Math.round(num(st.a)*num(st.ar)+num(st.b)*num(st.br))+' kg</span></div>';
@@ -358,8 +407,9 @@ function renderSession(){
       h+='</div>';
     });
     if(hist.length){
-      const p=hist[0], dl=cur-p.t;
-      h+='<div class="last">Ultima ('+fmt(p.d)+'): '+Math.round(p.t)+' kg'+(cur>0?' · oggi '+Math.round(cur)+' kg ('+(dl>=0?"+":"")+Math.round(dl)+')':'')+'</div>';
+      const p=hist[0], dl=cur-p.b;
+      h+='<div class="last">Serie migliore ultima volta ('+fmt(p.d)+'): '+Math.round(p.b)+' kg'+
+         (cur>0?' · oggi '+Math.round(cur)+' kg ('+(dl>=0?"+":"")+Math.round(dl)+')':'')+'</div>';
     }
     h+='<div class="note">'+ex.note+'</div></div>';
   });
@@ -390,7 +440,7 @@ function renderSession(){
   }));
   document.getElementById("mkdone").addEventListener("click",()=>{
     const c=S.log[SEL]; c.done=!c.done; save();
-    toast(c.done?"Seduta chiusa · prossima: "+CYC[(CYC.indexOf(c.type)+1)%3]:"Seduta riaperta");
+    toast(c.done?"Seduta chiusa · prossima: "+CYC[(CYC.indexOf(c.type)+1)%CYC.length]:"Seduta riaperta");
     renderStrip(); renderSession(); renderTicker();
   });
 }
@@ -556,7 +606,7 @@ function renderData(){
    '<div class="fld"><label>Prima sessione</label><select id="cfirst">'+CYC.map(t=>'<option'+(S.cfg.first===t?" selected":"")+'>'+t+'</option>').join("")+'</select></div>'+
    '<div class="fld"><label>Prossima sarà</label><input value="'+nextType()+'" readonly></div></div>'+
    '<div class="btnrow"><button class="btn ghost" id="savecfg">Aggiorna</button></div>'+
-   '<div class="hint">Non ci sono giorni fissi: la rotazione avanza di una lettera ogni volta che chiudi una seduta. Se salti giorni non succede nulla, riprendi da dove eri.</div></div>';
+   '<div class="hint">Non ci sono giorni fissi: X e Y si alternano a ogni seduta chiusa. Entrambe sono full body, quindi una seduta saltata non lascia scoperto nessun distretto. Obiettivo 3 a settimana — è il volume settimanale che conta, e lo muovi solo con le sedute.</div></div>';
   h+='<div class="card"><h3>Totali</h3><div class="grid2" style="padding-bottom:4px">'+
    '<div><div style="font-family:var(--mono);font-size:23px;font-weight:600">'+n+'</div><div style="font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">sedute chiuse</div></div>'+
    '<div><div style="font-family:var(--mono);font-size:23px;font-weight:600">'+(Math.round(tot/100)/10)+' t</div><div style="font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)">tonnellaggio</div></div></div>'+
